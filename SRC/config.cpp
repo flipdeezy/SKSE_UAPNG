@@ -6,6 +6,7 @@
 namespace config {
     const char* INI_FILE_NAME = "UAPNG.ini";
     int iMovementType;
+    bool bEnableCloseMenu;
     bool bEnableNotifications;
 
     std::string GetIniFilePath() {
@@ -30,6 +31,7 @@ namespace config {
     std::unordered_map<std::string, int> ReadSettings() {
         std::unordered_map<std::string, int> settings;
         settings["iMovementType"] = GetIniSetting("iMovementType", 0);
+        settings["bEnableCloseMenu"] = GetIniSetting("bEnableCloseMenu", 1);
         settings["bEnableNotifications"] = GetIniSetting("bEnableNotifications", 1);
         return settings;
     }
