@@ -45,7 +45,7 @@ jobs:
         # continue-on-error: true
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: Utlimate Animated Potion NG - SKSE Plugin
           path: ${{ github.workspace }}/build/Release/UAPNG.dll
