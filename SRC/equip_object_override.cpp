@@ -1,4 +1,5 @@
 #include "actor_data.h"
+#include "config.h"
 #include "equip_object_override.h"
 #include "function_library.h"
 #include "logger.h"
@@ -19,7 +20,9 @@ void EquipObjectOverRide::thunk(RE::ActorEquipManager* a_self, RE::Actor* a_acto
             data.bAnimationInProgress = true;
             AnimObjectReplaceModelByFormID(0x0D36C8, AlchObjectGetModelPath(a_object).c_str());
             EquipPotion(a_actor, a_self, a_object, a_unk);
-            CloseMenu();
+            if (config::bEnableCloseMenu) {
+                CloseMenu();
+            }
 
             lastEquippedObject = a_object;
 

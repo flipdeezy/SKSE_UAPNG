@@ -20,6 +20,7 @@ SKSEPluginLoad(const SKSE::LoadInterface* skse) {
     SetupLog();
     auto settings = config::ReadSettings();
     config::iMovementType = settings["iMovementType"];
+    config::bEnableCloseMenu = settings["bEnableCloseMenu"] != 0;
     config::bEnableNotifications = settings["bEnableNotifications"] != 0;
     SKSE::GetMessagingInterface()->RegisterListener(PluginReady);
     return true;
