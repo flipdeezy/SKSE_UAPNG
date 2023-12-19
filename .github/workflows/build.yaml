@@ -1,0 +1,51 @@
+name: Build
+
+on: push
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [windows-latest]
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install latest CMake & Ninja
+        uses: lukka/get-cmake@latest
+
+      - name: vcpkg build
+        id: vcpkg
+        uses: johnwason/vcpkg-action@v5
+        with:
+          manifest-dir: ${{ github.workspace }} # Set to directory containing vcpkg.json
+          # Project is a dynamic link, but dependent libraries are statically linked.
+          # However, this setting is also set by cmake preset, so those specified here are currently meaningless.
+          # Entering this information because it is a required field to use this CI.
+          triplet: x64-windows-static-md
+          token: ${{ github.token }}
+
+      - name: Set up cmake-build cache
+        uses: actions/cache@v3
+        with:
+          path: ./build
+          key: cmake-build-${{ runner.os }}-${{ hashFiles('./CMakeLists.txt') }}
+          restore-keys: cmake-build.${{ runner.os }}.
+
+      # GitHub Action does not follow the path of cl.exe, which causes a path error, but this is to be avoided.
+      # See https://github.com/actions/runner-images/issues/6205#issuecomment-1241573412
+      - uses: ilammy/msvc-dev-cmd@v1
+      - name: Build
+        run: |
+          cmake --preset release
+          cmake --build --preset verbose-build-windows -j $Env:NUMBER_OF_PROCESSORS
+        # Enable this to avoid wasting the cache of dependent libraries in case of frequent errors during development.
+        # continue-on-error: true
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: Utlimate Animated Potion NG - SKSE Plugin
+          path: ${{ github.workspace }}/build/Release/UAPNG.dll

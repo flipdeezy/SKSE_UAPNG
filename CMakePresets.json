@@ -30,5 +30,13 @@
             "displayName": "Release",
             "cacheVariables": { "CMAKE_BUILD_TYPE": "Release" }
         }
+    ],
+    "buildPresets": [
+        {
+            "name": "verbose-build-windows",
+            "displayName": "Verbose Build",
+            "configurePreset": "release",
+            "nativeToolOptions": ["-v"]
+        }
     ]
 }
