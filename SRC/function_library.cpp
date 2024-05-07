@@ -204,7 +204,7 @@ bool IsObjectAPotion(RE::TESBoundObject* a_object) {
     // Check if the object is of type AlchemyItem
     auto alchemyItem = skyrim_cast<RE::AlchemyItem*>(a_object);
     if (!alchemyItem) {
-        return false;  // Return false if the cast fails, meaning it's not an alchemy item
+        return false; 
     }
     std::string objectName = alchemyItem->GetName();
     std::transform(objectName.begin(), objectName.end(), objectName.begin(),
