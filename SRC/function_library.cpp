@@ -198,9 +198,18 @@ bool CheckActorAndObjectKeywords(RE::TESBoundObject* a_object, RE::Actor* a_acto
 }
 
 bool IsObjectAPotion(RE::TESBoundObject* a_object) {
-    std::string objectName = a_object->GetName();
+    if (!a_object) {
+        return false;
+    }
+    // Check if the object is of type AlchemyItem
+    auto alchemyItem = skyrim_cast<RE::AlchemyItem*>(a_object);
+    if (!alchemyItem) {
+        return false;  // Return false if the cast fails, meaning it's not an alchemy item
+    }
+    std::string objectName = alchemyItem->GetName();
     std::transform(objectName.begin(), objectName.end(), objectName.begin(),
                    [](unsigned char c) { return static_cast<char>(std::tolower(c)); });
+    // Check if the name contains "potion"
     return objectName.find("potion") != std::string::npos;
 }
 
