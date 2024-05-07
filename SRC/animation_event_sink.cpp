@@ -36,7 +36,7 @@ AnimationEventSink* GetOrCreateEventSink(RE::Actor* a_actor, RE::ActorEquipManag
         eventSink = it->second.get();
     } else {
         eventSink = new AnimationEventSink(a_self, a_actor, a_object, a_unk);
-        actorEventSink[a_actor] = std::unique_ptr<AnimationEventSink>(eventSink);  // Wrap raw pointer in unique_ptr
+        actorEventSink[a_actor] = std::unique_ptr<AnimationEventSink>(eventSink);
     }
     return eventSink;
 }
