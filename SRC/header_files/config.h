@@ -3,6 +3,7 @@
 namespace config {
     extern const char* INI_FILE_NAME;
     extern int iMovementType;
+    extern bool bEnableCloseMenu;
     extern bool bEnableNotifications;
 
     std::string GetIniFilePath();
