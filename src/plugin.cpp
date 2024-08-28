@@ -18,9 +18,17 @@ void PluginReady(SKSE::MessagingInterface::Message* a_msg) {
                 config::iMovementType = settings["iMovementType"];
                 config::bEnableNotifications = settings["bEnableNotifications"] != 0;
                 config::bEnableSpamPotions = settings["bEnableSpamPotions"] != 0;
-                                
-                for (auto* eventSink : GetAllEventSinks()) {
+
+                std::vector<AnimationEventSink*> eventSinksToCleanup = GetAllEventSinks();
+                std::vector<AnimationEventSink*> sinksToRemove;
+
+                for (auto* eventSink : eventSinksToCleanup) {
                     CleanupAnimationEvent(eventSink, true);
+                    sinksToRemove.push_back(eventSink);
+                }
+
+                for (auto* sink : sinksToRemove) {
+                    RemoveEventSink(sink);
                 }
                 
                 logger::info("Ultimate Potion Animation NG - Post Load Game");

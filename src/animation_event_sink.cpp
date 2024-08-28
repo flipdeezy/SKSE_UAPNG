@@ -20,6 +20,7 @@ RE::BSEventNotifyControl AnimationEventSink::ProcessEvent(
             
         } else if (eventTag == "DrinkPotionStop" || eventTag == "EnableBumper" || eventTag == "MTState") {
             CleanupAnimationEvent(this, true);
+            RemoveEventSink(this);
         }
     }
     return RE::BSEventNotifyControl::kContinue;
@@ -56,26 +57,26 @@ void CleanupAnimationEvent(AnimationEventSink* eventSink, bool unHideWeapon) {
         logger::error("Error ++++++++++++++++++++++ CleanupAnimationEvent Failed: eventSink or eventSink->a_actor is null.");
         return;
     }
+
     ActorData& data = actorDataMap[eventSink->a_actor];
     data.bAnimationInProgress = false;
     data.bDrinking = false;
+
     if (unHideWeapon) {
         HideWeapon(eventSink->a_actor, false);
     }
-    if (eventSink->a_actor) {
-        SendAnimationEvent(eventSink->a_actor, "HeadtrackingOn");
-        SetAnimationVariableBool(eventSink->a_actor, "tdmHeadtrackingBehavior", true);
-        SetAnimationVariableBool(eventSink->a_actor, "bPlayEquipSound", false);
-    }
-    RemoveEventSink(eventSink);
+
+    SendAnimationEvent(eventSink->a_actor, "HeadtrackingOn");
+    SetAnimationVariableBool(eventSink->a_actor, "tdmHeadtrackingBehavior", true);
+    SetAnimationVariableBool(eventSink->a_actor, "bPlayEquipSound", false);
+
+    eventSink->a_actor->RemoveAnimationGraphEventSink(eventSink);
 }
 
 void RemoveEventSink(AnimationEventSink* sink) {
-    if (sink) {
-        sink->a_actor->RemoveAnimationGraphEventSink(sink);
-        auto it = actorEventSink.find(sink->a_actor);
-        if (it != actorEventSink.end()) {
-            actorEventSink.erase(it);
-        }
+    if (!sink) return;
+    auto it = actorEventSink.find(sink->a_actor);
+    if (it != actorEventSink.end()) {
+        actorEventSink.erase(it);
     }
 }
