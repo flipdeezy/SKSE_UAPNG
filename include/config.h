@@ -16,3 +16,5 @@ namespace config {
     int GetIniSetting(const char* settingName, int defaultValue);
     void SetIniSetting(const char* settingName, int value); 
 }
+
+inline std::atomic<bool> pause = false;

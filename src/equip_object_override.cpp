@@ -8,6 +8,13 @@
 RE::TESBoundObject* lastEquippedObject;
 
 void EquipObjectOverRide::thunk(RE::ActorEquipManager* a_self, RE::Actor* a_actor, RE::TESBoundObject* a_object, std::uint64_t a_unk) {
+
+    if (pause.load()) {
+        logger::warn("Pause is active, skipping EquipObjectOverRide::thunk");
+        func(a_self, a_actor, a_object, a_unk);
+        return;
+    }
+
     if (!a_object || !a_actor || !a_self) {
         func(a_self, a_actor, a_object, a_unk);
         return;
@@ -19,10 +26,11 @@ void EquipObjectOverRide::thunk(RE::ActorEquipManager* a_self, RE::Actor* a_acto
     }
 
     if (CheckActorAndObjectKeywords(a_object, a_actor) || IsObjectAPotion(a_object) || IsObjectWhitelisted(a_object)) {
-        ActorData& data = actorDataMap[a_actor];
+        const auto actor_custom = ActorCustom(a_actor);
+        ActorData& data = actorDataMap[actor_custom];
         if (IsActorReadyForAnimation(a_actor )) {
-            data.bAnimationInProgress = true;
-            data.bDrinking = true;
+            data.bAnimationInProgress.store(true);
+            data.bDrinking.store(true);
             AnimObjectReplaceModelByFormID(0x0D36C8, AlchObjectGetModelPath(a_object).c_str());
             EquipPotion(a_actor, a_self, a_object, a_unk);
             if (!config::bEnableSpamPotions) {

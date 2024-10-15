@@ -1,7 +1,7 @@
 {
   "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
   "name": "u-a-p-n-g",
-  "version-semver": "1.0.0",
+  "version-semver": "2.6.0",
   "builtin-baseline": "a1212c93cabaa9c5c36c1ffdb4bddd59fdf31e43",
   "dependencies": [
     "fmt",

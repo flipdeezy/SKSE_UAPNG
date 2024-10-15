@@ -1,7 +1,6 @@
 #include "PCH.h"
 #include "config.h"
 #include "equip_object_override.h"
-#include "function_library.h"
 #include "logger.h"
 #include "animation_event_sink.h"
 
@@ -14,25 +13,23 @@ void PluginReady(SKSE::MessagingInterface::Message* a_msg) {
             break;
         case SKSE::MessagingInterface::kPostLoadGame:
             {
+                pause.store(true);
+
                 auto settings = config::ReadSettings();
                 config::iMovementType = settings["iMovementType"];
                 config::bEnableNotifications = settings["bEnableNotifications"] != 0;
                 config::bEnableSpamPotions = settings["bEnableSpamPotions"] != 0;
 
-                std::vector<AnimationEventSink*> eventSinksToCleanup = GetAllEventSinks();
-                std::vector<AnimationEventSink*> sinksToRemove;
-
-                for (auto* eventSink : eventSinksToCleanup) {
-                    CleanupAnimationEvent(eventSink, true);
-                    sinksToRemove.push_back(eventSink);
+                for (auto& eventSink : actorEventSink | std::views::values) {
+                    CleanupAnimationEvent(eventSink.get(), true);
                 }
 
-                for (auto* sink : sinksToRemove) {
-                    RemoveEventSink(sink);
-                }
+                actorEventSink.clear();
                 
                 logger::info("Ultimate Potion Animation NG - Post Load Game");
                 logger::info("Settings loaded: iMovementType: {}, bEnableNotifications: {}, bEnableSpamPotions: {}", config::iMovementType, config::bEnableNotifications, config::bEnableSpamPotions);
+
+                pause.store(false);
             }
             break;
         default:
